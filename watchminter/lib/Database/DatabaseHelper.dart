@@ -93,7 +93,7 @@ class DatabaseHelper {
     WatchHistoryModel watchHistoryModel = WatchHistoryModel(
         ownerId: watchModel.ownerId, time: watchModel.createdAt);
 
-    watchModel.history = UniqueKey().toString();
+    // watchModel.history = UniqueKey().toString();
     watchModel.watchId = UniqueKey().toString();
     var docId = watchesRef.doc().id;
 
@@ -109,44 +109,67 @@ class DatabaseHelper {
         .set(watchHistoryModel.toMap());
   }
 
-  Future GetWatch(String watchId)async{
+  Future<WatchModel> GetWatch(String watchId) async {
     WatchModel watchModel = WatchModel();
+    var docId;
     await Firebase.initializeApp();
-     watchesRef.where("watchId", isEqualTo: watchId).get().then((value){
-       value.docs.forEach((doc) {
-         // print(doc["brand"]);
-         watchModel.brand = doc["brand"];
-         watchModel.location = doc["location"];
-         watchModel.price = doc["price"];
-         watchModel.box = doc["box"];
-         watchModel.condition = doc["condition"];
-         watchModel.displayImage = doc["displayImage"];
-         watchModel.history = doc["history"];
-         watchModel.forSale = doc["forSale"];
-          watchModel.createdAt = doc["createdAt"];
-         watchModel.model = doc["model"];
-         watchModel.offeredBy = doc["offeredBy"];
-         watchModel.ownerId = doc["ownerId"];
-         watchModel.papers = doc["papers"];
-         watchModel.serialNumber = doc["serialNumber"];
-         watchModel.watchId = doc["watchId"];
-       });
+
+    await watchesRef.where("watchId", isEqualTo: watchId).get().then((value) {
+      value.docs.forEach((doc) {
+        watchModel.brand = doc["brand"];
+        watchModel.location = doc["location"];
+        watchModel.price = doc["price"];
+        watchModel.box = doc["box"];
+        watchModel.condition = doc["condition"];
+        watchModel.displayImage = doc["displayImage"];
+        watchModel.forSale = doc["forSale"];
+        watchModel.createdAt = doc["createdAt"];
+        watchModel.model = doc["model"];
+        watchModel.offeredBy = doc["offeredBy"];
+        watchModel.ownerId = doc["ownerId"];
+        watchModel.papers = doc["papers"];
+        watchModel.serialNumber = doc["serialNumber"];
+        watchModel.watchId = doc["watchId"];
+        docId = doc.id;
+      });
+    }).catchError((onError) {
+      Get.snackbar("Error", onError.toString(),
+          colorText: AppColors.white,
+          icon: Icon(Icons.error_outline, color: Colors.white),
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.orange);
+      return watchModel;
+    });
+    List<String> images = [];
+    await watchesRef.doc(docId).collection("Images").get().then((value) {
+      value.docs.forEach((element) {
+        images.add(element["Img"].toString());
+      });
+      watchModel.images = images;
+    }).catchError((onError) {
+      Get.snackbar("Error", onError.toString(),
+          colorText: AppColors.white,
+          icon: Icon(Icons.error_outline, color: Colors.white),
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.orange);
+      return watchModel;
     });
 
-
-     return watchModel;
+    return watchModel;
   }
 
-  Future UpdateWatch(WatchModel watchModel)async{
+  Future UpdateWatch(WatchModel watchModel) async {
     await Firebase.initializeApp();
     var docID;
-    watchesRef.where("watchId", isEqualTo: watchModel.watchId).get().then((value)async{
+    watchesRef
+        .where("watchId", isEqualTo: watchModel.watchId)
+        .get()
+        .then((value) async {
       value.docs.forEach((element) {
-        docID= element.id;
+        docID = element.id;
       });
       print(docID);
       await watchesRef.doc(docID).set(watchModel.toMap());
-
     });
   }
 
@@ -184,5 +207,4 @@ class DatabaseHelper {
     }
     return displayImage;
   }
-
 }

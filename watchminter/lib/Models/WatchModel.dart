@@ -2,7 +2,7 @@ class WatchModel {
   var watchId,
       ownerId,
       images,
-  displayImage,
+      displayImage,
       brand,
       model,
       serialNumber,
@@ -11,7 +11,6 @@ class WatchModel {
       box,
       location,
       offeredBy,
-      history,
       forSale,
       createdAt,
       price;
@@ -29,7 +28,6 @@ class WatchModel {
       this.box,
       this.location,
       this.offeredBy,
-      this.history,
       this.forSale,
       this.createdAt,
       this.price});
@@ -47,7 +45,6 @@ class WatchModel {
     map["box"] = box;
     map["location"] = location;
     map["offeredBy"] = offeredBy;
-    map["history"] = history;
     map["forSale"] = forSale;
     map["createdAt"] = createdAt;
     map["price"] = price;
@@ -67,7 +64,6 @@ class WatchModel {
       box: map['box'],
       location: map['location'],
       offeredBy: map['offeredBy'],
-      history: map['history'],
       forSale: map['forSale'],
       createdAt: map['createdAt'],
       price: map['price'],

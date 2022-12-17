@@ -296,9 +296,8 @@ class _EditWatchDetailsState extends State<EditWatchDetails> {
                         value: widget.watchModel.condition,
                         onChanged: (newValue) {
                           setState(() {
-                            condition = newValue as String;
+                           // condition = newValue as String;
                             widget.watchModel.condition = newValue as String;
-                            //selectedCatagory = newValue as String;
                           });
                         },
                       ),
@@ -340,7 +339,7 @@ class _EditWatchDetailsState extends State<EditWatchDetails> {
                         value: widget.watchModel.papers,
                         onChanged: (newValue) {
                           setState(() {
-                            selectedPapersOption = newValue as String;
+                           // selectedPapersOption = newValue as String;
                             widget.watchModel.papers = newValue as String;
                           });
                         },
@@ -403,7 +402,7 @@ class _EditWatchDetailsState extends State<EditWatchDetails> {
                         value: widget.watchModel.box,
                         onChanged: (newValue) {
                           setState(() {
-                            selectedBoxOption = newValue as String;
+                            //selectedBoxOption = newValue as String;
                             widget.watchModel.box = newValue as String;
                           });
                         },
@@ -443,9 +442,9 @@ class _EditWatchDetailsState extends State<EditWatchDetails> {
                         widget.watchModel.brand = brandName;
                         widget.watchModel.model = model;
                         widget.watchModel.serialNumber = serialNumber;
-                         widget.watchModel.condition=condition;
-                         widget.watchModel.papers=selectedPapersOption;
-                         widget.watchModel.box=selectedBoxOption;
+                         // widget.watchModel.condition=condition;
+                         // widget.watchModel.papers=selectedPapersOption;
+                         // widget.watchModel.box=selectedBoxOption;
                         Get.back(result: widget.watchModel);
                       }
                     },
