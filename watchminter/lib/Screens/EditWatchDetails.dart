@@ -49,10 +49,6 @@ class _EditWatchDetailsState extends State<EditWatchDetails> {
         children: [
           Container(
             decoration: BoxDecoration(color: AppColors.white
-                //     image: DecorationImage(
-                //   fit: BoxFit.cover,
-                //   image: new AssetImage("assets/images/blacknwhite_bg.jpg"),
-                // )
                 ),
           ),
           SingleChildScrollView(
