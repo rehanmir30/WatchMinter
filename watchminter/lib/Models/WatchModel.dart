@@ -9,6 +9,7 @@ class WatchModel {
       condition,
       papers,
       box,
+      history,
       location,
       offeredBy,
       forSale,
@@ -19,13 +20,14 @@ class WatchModel {
       {this.watchId,
       this.ownerId,
       this.images,
-        this.displayImage,
+      this.displayImage,
       this.brand,
       this.model,
       this.serialNumber,
       this.condition,
       this.papers,
       this.box,
+      this.history,
       this.location,
       this.offeredBy,
       this.forSale,
@@ -38,7 +40,7 @@ class WatchModel {
     map["ownerId"] = ownerId;
     map["brand"] = brand;
     map["model"] = model;
-    map["displayImage"]=displayImage;
+    map["displayImage"] = displayImage;
     map["serialNumber"] = serialNumber;
     map["condition"] = condition;
     map["papers"] = papers;

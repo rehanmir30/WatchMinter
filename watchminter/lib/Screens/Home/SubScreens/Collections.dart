@@ -23,14 +23,12 @@ class _CollectionsState extends State<Collections> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      //backgroundColor: AppColors.background,
       body: Stack(
         children: [
           Container(
             decoration: BoxDecoration(color: AppColors.white),
           ),
           Container(
-            //height: MediaQuery.of(context).size.height,
             child: Column(
               children: [
                 Align(

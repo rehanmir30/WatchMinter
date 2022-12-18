@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:watchminter/Constants/AppColors.dart';
 import 'package:watchminter/Database/DatabaseHelper.dart';
@@ -29,10 +30,6 @@ class _MyProfileState extends State<MyProfile> {
           Container(
             decoration: BoxDecoration(
               color: AppColors.white
-            //     image: DecorationImage(
-            //   fit: BoxFit.cover,
-            //   image: new AssetImage("assets/images/blacknwhite_bg.jpg"),
-            // )
             ),
           ),
           Container(
@@ -57,10 +54,20 @@ class _MyProfileState extends State<MyProfile> {
                       fontFamily: "Gotham",
                       fontSize: 22),
                 ).marginOnly(top: 18),
-                // Text(
-                //   "Good Evening",
-                //   style: TextStyle(color: AppColors.orange, letterSpacing: 2),
-                // ).marginOnly(top: 10),
+                InkWell(
+                  onTap: ()async{
+                    await Clipboard.setData(ClipboardData(text: widget.userModel.id));
+                    Get.snackbar("Copy Successfull", "Id copied to clipboard",
+                        colorText: AppColors.white,
+                        icon: Icon(Icons.error_outline, color: Colors.white),
+                        snackPosition: SnackPosition.TOP,
+                        backgroundColor: AppColors.orange);
+                  },
+                  child: Text(
+                    widget.userModel.id,
+                    style: TextStyle(color: AppColors.orange, letterSpacing: 2),
+                  ).marginOnly(top: 10),
+                ),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: InkWell(

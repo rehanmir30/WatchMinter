@@ -10,4 +10,11 @@ class WatchHistoryModel {
     map["time"] = time;
     return map;
   }
+  factory WatchHistoryModel.fromMap(var map) {
+    return WatchHistoryModel(
+      ownerId: map['ownerId'],
+      buyerId: map['buyerId'],
+      time: map['time'],
+    );
+  }
 }

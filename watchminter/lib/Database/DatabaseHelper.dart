@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/snackbar/snackbar.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:watchminter/Constants/AppColors.dart';
 import 'package:watchminter/Global/firebase_ref.dart';
 import 'package:watchminter/Models/UserModel.dart';
 import 'package:watchminter/Models/WatchHistoryModel.dart';
 import 'package:watchminter/Models/WatchModel.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+
+import 'package:intl/intl.dart';
 
 class DatabaseHelper {
   Future<UserModel> SignUp(UserModel model) async {
@@ -113,7 +113,7 @@ class DatabaseHelper {
     WatchModel watchModel = WatchModel();
     var docId;
     await Firebase.initializeApp();
-
+//Getting watch details
     await watchesRef.where("watchId", isEqualTo: watchId).get().then((value) {
       value.docs.forEach((doc) {
         watchModel.brand = doc["brand"];
@@ -140,6 +140,7 @@ class DatabaseHelper {
           backgroundColor: AppColors.orange);
       return watchModel;
     });
+    //Getting watch images
     List<String> images = [];
     await watchesRef.doc(docId).collection("Images").get().then((value) {
       value.docs.forEach((element) {
@@ -154,8 +155,50 @@ class DatabaseHelper {
           backgroundColor: AppColors.orange);
       return watchModel;
     });
-
+//Getting watch history
+    List<WatchHistoryModel> historyList = [];
+    await watchesRef.doc(docId).collection("History").orderBy("time").get().then((value) {
+      value.docs.forEach((element) {
+        WatchHistoryModel watchHistoryModel =
+            WatchHistoryModel.fromMap(element);
+        historyList.add(watchHistoryModel);
+      });
+      watchModel.history = historyList;
+    }).catchError((onError) {
+      Get.snackbar("Error", onError.toString(),
+          colorText: AppColors.white,
+          icon: Icon(Icons.error_outline, color: Colors.white),
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.orange);
+      return watchModel;
+    });
     return watchModel;
+  }
+
+  Future<UserModel> GetSpecificUser(String userId)async{
+    UserModel userModel=UserModel();
+
+    DocumentSnapshot userData = await usersRef.doc(userId).get();
+    Map<String, dynamic> dataFromDB = {
+      'id': userData["id"],
+      'Name': userData["Name"],
+      'Email': userData["Email"],
+      'DOB': userData["DOB"],
+      'House_name_number': userData["House_name_number"],
+      'Street': userData["Street"],
+      'Town': userData["Town"],
+      'Province': userData["Province"],
+      'Zip': userData["Zip"],
+      'Country': userData["Country"],
+      'About': userData["About"],
+      'Business details': userData["Business details"],
+      'Type': userData["Type"],
+      'Created at': userData["Created at"],
+      "Rating": userData['Rating'],
+      "Verified": userData["Verified"]
+    };
+    userModel = UserModel.fromMap(dataFromDB);
+    return userModel;
   }
 
   Future UpdateWatch(WatchModel watchModel) async {
@@ -168,8 +211,8 @@ class DatabaseHelper {
       value.docs.forEach((element) {
         docID = element.id;
       });
-      print(docID);
       await watchesRef.doc(docID).set(watchModel.toMap());
+      print(docID);
     });
   }
 
@@ -206,5 +249,31 @@ class DatabaseHelper {
       }
     }
     return displayImage;
+  }
+
+  Future<bool>SellWatch(WatchModel watchModel, buyerId) async{
+    var docID;
+    DateTime now = DateTime.now();
+    String currentDate = DateFormat('d MMM y').format(now);
+    DocumentSnapshot userData = await usersRef.doc(buyerId).get();
+    if(userData.exists){
+      watchModel.ownerId=buyerId;
+      await UpdateWatch(watchModel);
+      watchesRef
+          .where("watchId", isEqualTo: watchModel.watchId)
+          .get()
+          .then((value) async {
+        value.docs.forEach((element) {
+          docID = element.id;
+        });
+        WatchHistoryModel watchHistoryModel=WatchHistoryModel(ownerId: buyerId,buyerId: buyerId,time: currentDate);
+        await watchesRef.doc(docID).collection("History").doc().set(watchHistoryModel.toMap());
+        print(docID);
+      });
+
+      return true;
+    }else{
+      return false;
+    }
   }
 }
