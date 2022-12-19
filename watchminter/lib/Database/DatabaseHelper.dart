@@ -93,7 +93,6 @@ class DatabaseHelper {
     WatchHistoryModel watchHistoryModel = WatchHistoryModel(
         ownerId: watchModel.ownerId, time: watchModel.createdAt);
 
-    // watchModel.history = UniqueKey().toString();
     watchModel.watchId = UniqueKey().toString();
     var docId = watchesRef.doc().id;
 
@@ -113,7 +112,7 @@ class DatabaseHelper {
     WatchModel watchModel = WatchModel();
     var docId;
     await Firebase.initializeApp();
-//Getting watch details
+    //Getting watch details
     await watchesRef.where("watchId", isEqualTo: watchId).get().then((value) {
       value.docs.forEach((doc) {
         watchModel.brand = doc["brand"];
@@ -155,7 +154,7 @@ class DatabaseHelper {
           backgroundColor: AppColors.orange);
       return watchModel;
     });
-//Getting watch history
+    //Getting watch history
     List<WatchHistoryModel> historyList = [];
     await watchesRef.doc(docId).collection("History").orderBy("time").get().then((value) {
       value.docs.forEach((element) {
@@ -269,6 +268,7 @@ class DatabaseHelper {
         WatchHistoryModel watchHistoryModel=WatchHistoryModel(ownerId: buyerId,buyerId: buyerId,time: currentDate);
         await watchesRef.doc(docID).collection("History").doc().set(watchHistoryModel.toMap());
         print(docID);
+        return true;
       });
 
       return true;

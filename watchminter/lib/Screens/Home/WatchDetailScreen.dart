@@ -582,7 +582,7 @@ class _WatchDetailScreenState extends State<WatchDetailScreen> {
                                                       shadowColor:
                                                           AppColors.orange,
                                                       child: TextFormField(
-                                                        initialValue: "fJIuiawerzfKfCTTYLGJN2Zswzr2",
+                                                        initialValue: "Buyer Id",
                                                         validator: (BuyerId) {
                                                           if (BuyerId == null ||
                                                               BuyerId.isEmpty) {
