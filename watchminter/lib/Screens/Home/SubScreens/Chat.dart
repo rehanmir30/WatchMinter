@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:watchminter/Constants/AppColors.dart';
+import 'package:watchminter/Database/DatabaseHelper.dart';
+import 'package:watchminter/Global/firebase_ref.dart';
 import 'package:watchminter/Models/UserModel.dart';
 import 'package:watchminter/Screens/Home/MessageScreen.dart';
 
@@ -18,8 +21,12 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+
   @override
   Widget build(BuildContext context) {
+    List<String> receiversList = [];
+
+    receiversList.clear();
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(
@@ -46,14 +53,40 @@ class _ChatState extends State<Chat> {
                           ).marginOnly(top: 30, left: 12)),
                     ),
                     Expanded(
-                      child: ListView.builder(
-                          itemCount: 30,
-                          shrinkWrap: false,
-                          padding: EdgeInsets.only(top: 0),
-                          itemBuilder: (BuildContext context, int index) {
-                            return ChatTile(index, widget.userModel);
+                      child: StreamBuilder(
+                          stream: chatsRef
+                              .where("senderId", isEqualTo: widget.userModel.id)
+                              .snapshots(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasError ||
+                                !snapshot.hasData ||
+                                snapshot.data.docs.isEmpty) {
+                              return Center(child: Text("No chats found"));
+                            } else if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              EasyLoading.show(status: "Loading");
+                              return Container();
+                            } else {
+                              EasyLoading.dismiss();
+                              return ListView.builder(
+                                  itemCount: snapshot.data.docs.length,
+                                  shrinkWrap: false,
+                                  padding: EdgeInsets.only(top: 0),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    var data = snapshot.data.docs[index].data();
+                                    if (receiversList
+                                        .contains(data["receiverId"])) {
+                                      return Container();
+                                    } else {
+                                      receiversList.add(data["receiverId"]);
+                                      return ChatTile(index, data["receiverId"],
+                                          data["message"],widget.userModel);
+                                    }
+                                  });
+                            }
                           }),
-                    )
+                    ),
                   ],
                 ),
               ],
@@ -62,7 +95,7 @@ class _ChatState extends State<Chat> {
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            Get.to(CreateNewMessage());
+           Get.to(CreateNewMessage(widget.userModel));
           },
           label: Row(children: [
             Text("Create new message"),
@@ -78,25 +111,28 @@ class _ChatState extends State<Chat> {
 
 class ChatTile extends StatefulWidget {
   final int index;
-  UserModel userModel;
+  final String receiverId;
+  final String message;
+  final UserModel senderModel;
 
-  ChatTile(this.index, this.userModel, {Key? key}) : super(key: key);
+
+  ChatTile(this.index, this.receiverId, this.message, this.senderModel,{Key? key})
+      : super(key: key);
 
   @override
   State<ChatTile> createState() => _ChatTileState();
 }
 
-@override
-void initState() {}
-
 class _ChatTileState extends State<ChatTile> {
   bool isEven = false;
+  UserModel receiverUser = UserModel();
+
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(MessageScreen(widget.userModel), transition: Transition.zoom);
+        Get.to(MessageScreen(widget.senderModel,receiverUser), transition: Transition.zoom);
       },
       child: Container(
         child: Row(
@@ -119,14 +155,14 @@ class _ChatTileState extends State<ChatTile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "John Doe",
+                    receiverUser.name ?? "Name",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.background,
                         fontFamily: "Gotham"),
                   ),
                   Text(
-                    "Here is what i want to ...",
+                    widget.message.characters.take(10).toString()+"...",
                     style: TextStyle(
                         color: AppColors.background, fontFamily: "Gotham"),
                   )
@@ -151,6 +187,8 @@ class _ChatTileState extends State<ChatTile> {
 
   @override
   void initState() {
+
+    getUser();
     if (widget.index.isEven) {
       setState(() {
         isEven = true;
@@ -160,5 +198,12 @@ class _ChatTileState extends State<ChatTile> {
         isEven = false;
       });
     }
+  }
+
+  getUser() async {
+    receiverUser = await DatabaseHelper().GetSpecificUser(widget.receiverId);
+    setState(() {
+      receiverUser;
+    });
   }
 }

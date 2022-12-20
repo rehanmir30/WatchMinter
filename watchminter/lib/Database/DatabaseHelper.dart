@@ -194,7 +194,7 @@ class DatabaseHelper {
       'Type': userData["Type"],
       'Created at': userData["Created at"],
       "Rating": userData['Rating'],
-      "Verified": userData["Verified"]
+      "Verified": userData["Verified"],
     };
     userModel = UserModel.fromMap(dataFromDB);
     return userModel;
