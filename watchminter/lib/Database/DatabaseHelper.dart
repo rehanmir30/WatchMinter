@@ -46,7 +46,6 @@ class DatabaseHelper {
 
   Future<UserModel> SignIn(var email, var password) async {
     UserModel userModel = UserModel();
-
     await Firebase.initializeApp();
     try {
       FirebaseAuth _auth = await FirebaseAuth.instance;
