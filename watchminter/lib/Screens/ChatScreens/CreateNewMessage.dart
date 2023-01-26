@@ -116,7 +116,7 @@ class _CreateNewMessageState extends State<CreateNewMessage> {
                       EasyLoading.show(status: "Sending");
                       await chatsRef.doc().set({
                         'message': message.text.toString(),
-                        'time': DateTime.now(),
+                        'time': DateTime.now().millisecondsSinceEpoch,
                         'senderId': widget.userModel.id,
                         'receiverId': recipientId,
                         'username': widget.userModel.name

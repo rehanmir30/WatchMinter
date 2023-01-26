@@ -87,7 +87,6 @@ class _VerifyState extends State<Verify> {
   Widget build(BuildContext context) {
     EasyLoading.dismiss();
     return Scaffold(
-        backgroundColor: Colors.orange,
 
         body:pickedOrNot?Stack(
           children: [
@@ -130,7 +129,7 @@ class _VerifyState extends State<Verify> {
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Color(0xff7E8BAC),
+                          color: AppColors.orange,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(child: Text("Retake",style: TextStyle(fontSize: 18,color: Colors.white),)),
@@ -149,7 +148,7 @@ class _VerifyState extends State<Verify> {
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.orange,
+                          color: AppColors.orange,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(child: Text("Next",style: TextStyle(fontSize: 18,color: Colors.white),)),
@@ -161,33 +160,45 @@ class _VerifyState extends State<Verify> {
             ),
           ],
         )
-            :Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(child: Icon(Icons.credit_card,size: 30,)),
-              Text("Scan ID Card", style: TextStyle(fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white),),
-              InkWell(
-                onTap: ()async{
-                  // Get.to(CardScanner(),transition: Transition.fade);
-                  await SelectImage();
-
-                },
-                child: Container(
-                  width: 100,
-                  height: 50,
-                  padding: EdgeInsets.all(10),
+            :Stack(
+              children: [
+                Container(
                   decoration: BoxDecoration(
-                    color: Color(0xff7E8BAC),
-                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      fit: BoxFit.fitHeight,
+                      image: new AssetImage("assets/images/blacknwhite_bg.jpg"),
+                    )
                   ),
-                  child: Center(child: Text("Scan",style: TextStyle(fontSize: 18,color: Colors.white),)),
-                ).marginOnly(top: 12),
-              ),
+                ),
+                Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(child: Icon(Icons.credit_card,size: 30,)),
+                  Text("Scan ID Card", style: TextStyle(fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.black87),),
+                  InkWell(
+                    onTap: ()async{
+                      // Get.to(CardScanner(),transition: Transition.fade);
+                      await SelectImage();
 
-            ]
-        )
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 50,
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.orange,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(child: Text("Scan",style: TextStyle(fontSize: 18,color: Colors.white),)),
+                    ).marginOnly(top: 12),
+                  ),
+
+                ]
+        ),
+              ],
+            )
     );
   }
 }
@@ -353,7 +364,6 @@ class _CardScannerState extends State<CardScanner> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xff616E8F),
         body:pickedOrNot?Stack(
           children: [
 
@@ -396,7 +406,7 @@ class _CardScannerState extends State<CardScanner> {
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Color(0xff7E8BAC),
+                          color: AppColors.orange,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(child: Text("Retake",style: TextStyle(fontSize: 18,color: Colors.white),)),
@@ -414,7 +424,7 @@ class _CardScannerState extends State<CardScanner> {
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Color(0xff7E8BAC),
+                          color: AppColors.orange,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(child: Text("Processing",style: TextStyle(fontSize: 18,color: Colors.white),)),
@@ -436,7 +446,7 @@ class _CardScannerState extends State<CardScanner> {
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Color(0xff7E8BAC),
+                          color: AppColors.orange,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(child: Text("Done",style: TextStyle(fontSize: 18,color: Colors.white),)),
@@ -446,39 +456,49 @@ class _CardScannerState extends State<CardScanner> {
                 ],
               ),
             ),
-            Visibility(
-                visible: loading,
-                child: Center(child: CircularProgressIndicator(color: Color(0xff7E8BAC),),))
+            Visibility(visible: loading,
+                child: Center(child: CircularProgressIndicator(color: AppColors.orange,),))
 
           ],
         )
-            :Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(child: Icon(Icons.person,size: 30,)),
-              Text("Scan Face", style: TextStyle(fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white),),
-              InkWell(
-                onTap: ()async{
-                  // Get.to(CardScanner(),transition: Transition.fade);
-                  await SelectImage();
-
-                },
-                child: Container(
-                  width: 100,
-                  height: 50,
-                  padding: EdgeInsets.all(10),
+            :Stack(
+              children: [
+                Container(
                   decoration: BoxDecoration(
-                    color: Color(0xff7E8BAC),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(child: Text("Scan",style: TextStyle(fontSize: 18,color: Colors.white),)),
-                ).marginOnly(top: 12),
-              ),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: new AssetImage("assets/images/blacknwhite_bg.jpg"),
+                      )),
+                ),
+                Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(child: Icon(Icons.person,size: 50,color: AppColors.orange,)),
+                  Text("Scan Face", style: TextStyle(fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                      color: Colors.black87),),
+                  InkWell(
+                    onTap: ()async{
+                      // Get.to(CardScanner(),transition: Transition.fade);
+                      await SelectImage();
 
-            ]
-        )
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 50,
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.orange,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(child: Text("Scan",style: TextStyle(fontSize: 18,color: Colors.white),)),
+                    ).marginOnly(top: 12),
+                  ),
+
+                ]
+        ),
+              ],
+            )
     );
 
   }
