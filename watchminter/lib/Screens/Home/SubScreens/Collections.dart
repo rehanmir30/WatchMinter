@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:watchminter/Constants/AppColors.dart';
+import 'package:watchminter/Database/DatabaseHelper.dart';
 import 'package:watchminter/Global/firebase_ref.dart';
 import 'package:watchminter/Models/UserModel.dart';
 import 'package:watchminter/Models/WatchModel.dart';
@@ -19,6 +21,12 @@ class Collections extends StatefulWidget {
 }
 
 class _CollectionsState extends State<Collections> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,30 +56,46 @@ class _CollectionsState extends State<Collections> {
                           .where("ownerId", isEqualTo: widget.userModel.id)
                           .snapshots(),
                       builder: (context, AsyncSnapshot snapshot) {
+                        final list = [];
+
+                        for (var i in snapshot.data?.docs??[]) {
+                          if (i['escrow'] == true) {
+                            list.add(i);
+                          }
+                        }
+
                         if (snapshot.hasError ||
                             !snapshot.hasData ||
                             snapshot.data.docs.isEmpty) {
                           return Center(
-                            child: Text("No watches found in your collection")
-                          );
-                        }else if(snapshot.connectionState ==
-                            ConnectionState.waiting){
-                          EasyLoading.show(status:"Loading");
+                              child:
+                                  Text("No watches found in your collection"));
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          EasyLoading.show(status: "Loading");
                           return Container();
-                        }
-                        else {
+                        } else {
                           EasyLoading.dismiss();
-                          return GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2),
-                              physics: ScrollPhysics(),
-                              shrinkWrap: true,
-                              primary: true,
-                              itemCount:  snapshot.data.docs.length,
-                              itemBuilder: (context, index) {
-                                return CollectionTiles(snapshot.data.docs[index]);
-                              });
+                          if (list.isNotEmpty ||
+                              list != null ||
+                              list != '' ||
+                              list.length != 0) {
+                            return GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2),
+                                physics: ScrollPhysics(),
+                                shrinkWrap: true,
+                                primary: true,
+                                itemCount: list.length,
+                                itemBuilder: (context, index) {
+                                  return CollectionTiles(list[index]);
+                                });
+                          } else {
+                            return Center(
+                              child: Text("No watch Found"),
+                            );
+                          }
                         }
                       }),
                 ),
@@ -101,16 +125,13 @@ class _CollectionsState extends State<Collections> {
 //Extra work
 class CollectionTiles extends StatefulWidget {
   final data;
-  const CollectionTiles(this.data,{Key? key}) : super(key: key);
+  const CollectionTiles(this.data, {Key? key}) : super(key: key);
 
   @override
   State<CollectionTiles> createState() => _CollectionTilesState();
 }
 
 class _CollectionTilesState extends State<CollectionTiles> {
-
-
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -118,7 +139,8 @@ class _CollectionTilesState extends State<CollectionTiles> {
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () {
-          Get.to(WatchDetailScreen(widget.data["watchId"]), transition: Transition.zoom);
+          Get.to(WatchDetailScreen(widget.data["watchId"]),
+              transition: Transition.zoom);
         },
         child: Container(
           width: 200,
@@ -140,8 +162,13 @@ class _CollectionTilesState extends State<CollectionTiles> {
                         topRight: Radius.circular(12),
                       ),
                     ),
-                    child:FadeInImage.assetNetwork(
-                      image: widget.data["displayImage"],
+                    // child: CachedNetworkImage(
+                    //   imageUrl:  widget.data["displayImage"],
+                    //   placeholder: (context, url) => Image.asset("assets/images/watch.png"),
+                    //   errorWidget: (context, url, error) => Icon(Icons.error),
+                    // ),
+                    child: FadeInImage.assetNetwork(
+                      image: widget.data["displayImage"]??"assets/images/watch.png",
                       placeholder: "assets/images/watch.png",
                     ),
                     // Image.asset("assets/images/watch.png"),
@@ -172,6 +199,8 @@ class _CollectionTilesState extends State<CollectionTiles> {
 
   @override
   void initState() {
-     // print("displayImage: "+widget.data["displayImage"].toString());
+    // print("displayImage: "+widget.data["displayImage"].toString());
+
   }
+
 }

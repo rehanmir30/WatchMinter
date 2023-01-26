@@ -14,7 +14,8 @@ class WatchModel {
       offeredBy,
       forSale,
       createdAt,
-      price;
+      price,
+      escrow;
 
   WatchModel(
       {this.watchId,
@@ -32,7 +33,8 @@ class WatchModel {
       this.offeredBy,
       this.forSale,
       this.createdAt,
-      this.price});
+      this.price,
+      this.escrow});
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = <String, dynamic>{};
@@ -50,6 +52,7 @@ class WatchModel {
     map["forSale"] = forSale;
     map["createdAt"] = createdAt;
     map["price"] = price;
+    map["escrow"] = escrow;
     return map;
   }
 
@@ -69,6 +72,7 @@ class WatchModel {
       forSale: map['forSale'],
       createdAt: map['createdAt'],
       price: map['price'],
+      escrow:map['escrow'],
     );
   }
 }

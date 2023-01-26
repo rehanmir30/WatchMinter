@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,18 +8,16 @@ import 'package:watchminter/Constants/AppColors.dart';
 import 'package:watchminter/Database/DatabaseHelper.dart';
 import 'package:watchminter/Models/UserModel.dart';
 import 'package:watchminter/Models/WatchModel.dart';
+import 'package:watchminter/Screens/Home/SellWatch.dart';
 
 import '../EditWatchDetails.dart';
 
 class WatchDetailScreen extends StatefulWidget {
   final watchId;
-
   WatchDetailScreen(this.watchId, {Key? key}) : super(key: key);
-
   @override
   State<WatchDetailScreen> createState() => _WatchDetailScreenState();
 }
-
 class _WatchDetailScreenState extends State<WatchDetailScreen> {
   bool value = false;
   WatchModel watchModel = WatchModel();
@@ -28,7 +27,6 @@ class _WatchDetailScreenState extends State<WatchDetailScreen> {
   final formKey = GlobalKey<FormState>();
   var focusNodeBuyerId = FocusNode();
   var buyerId;
-
   @override
   void initState() {
     focusNodeBuyerId.addListener(() {
@@ -44,7 +42,6 @@ class _WatchDetailScreenState extends State<WatchDetailScreen> {
     });
     getWatchDetails();
   }
-
   getWatchDetails() async {
     EasyLoading.show(status: "Loading....");
     watchModel = await DatabaseHelper().GetWatch(widget.watchId);
@@ -100,7 +97,10 @@ class _WatchDetailScreenState extends State<WatchDetailScreen> {
                             ).marginOnly(top: 30, left: 12)),
                       ),
                       CarouselSlider(
-                        options: CarouselOptions(height: 200.0),
+                        options: CarouselOptions(
+                            height: 200.0,
+                            enableInfiniteScroll: false,
+                            viewportFraction: 1.0),
                         items: watchModel.images != null
                             ? images.map((i) {
                                 return Builder(
@@ -543,172 +543,13 @@ class _WatchDetailScreenState extends State<WatchDetailScreen> {
                           ),
                           InkWell(
                             onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return StatefulBuilder(
-                                      builder: (BuildContext context,
-                                          StateSetter setState) {
-                                        return Dialog(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(15.0)),
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            height: 250,
-                                            child: Form(
-                                              key: formKey,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12.0),
-                                                child: Column(
-                                                  children: [
-                                                    Text(
-                                                      "Enter the user's ID to sell this watch",
-                                                      style: TextStyle(
-                                                          color: AppColors
-                                                              .background,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontFamily: "Gotham"),
-                                                    ).marginOnly(top: 20),
-                                                    Material(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      elevation:
-                                                          buyer_elevation,
-                                                      shadowColor:
-                                                          AppColors.orange,
-                                                      child: TextFormField(
-                                                        initialValue: "Buyer Id",
-                                                        validator: (BuyerId) {
-                                                          if (BuyerId == null ||
-                                                              BuyerId.isEmpty) {
-                                                            return "Buyer ID is required";
-                                                          } else {
-                                                            buyerId = BuyerId;
-                                                            return null;
-                                                          }
-                                                        },
-                                                        focusNode:
-                                                            focusNodeBuyerId,
-                                                        keyboardType:
-                                                            TextInputType.text,
-                                                        style: const TextStyle(
-                                                            color: AppColors
-                                                                .background),
-                                                        decoration:
-                                                            InputDecoration(
-                                                          isDense: true,
-                                                          hintText: "Buyer id",
-                                                          fillColor:
-                                                              Colors.white,
-                                                          filled: true,
-                                                          contentPadding:
-                                                              const EdgeInsets
-                                                                  .all(12),
-                                                          border:
-                                                              OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.0),
-                                                            borderSide: const BorderSide(
-                                                                color: AppColors
-                                                                    .background,
-                                                                width: 1),
-                                                          ),
-                                                          focusedBorder:
-                                                              OutlineInputBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.0),
-                                                            borderSide:
-                                                                const BorderSide(
-                                                                    color: AppColors
-                                                                        .orange,
-                                                                    width: 1),
-                                                          ),
-                                                          hintStyle:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .grey),
-                                                        ),
-                                                      ),
-                                                    ).marginOnly(top: 12),
-                                                    Material(
-                                                      elevation: 20,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                      child: InkWell(
-                                                        onTap: () async{
-                                                          if (formKey.currentState !=
-                                                                  null &&
-                                                              formKey
-                                                                  .currentState!
-                                                                  .validate()) {
-                                                            EasyLoading.show(status: "Loading");
-                                                           bool result= await DatabaseHelper().SellWatch(watchModel,buyerId);
-                                                           EasyLoading.dismiss();
-                                                           if(result==true){
-                                                             Get.snackbar("Successful", "Watch sold successfully",
-                                                                 colorText: AppColors.white,
-                                                                 icon: Icon(Icons.error_outline, color: Colors.white),
-                                                                 snackPosition: SnackPosition.TOP,
-                                                                 backgroundColor: AppColors.orange);
-                                                             Get.back();
-
-                                                           }else{
-                                                             Get.snackbar("Error", "Buyer id was not found",
-                                                                 colorText: AppColors.white,
-                                                                 icon: Icon(Icons.error_outline, color: Colors.white),
-                                                                 snackPosition: SnackPosition.TOP,
-                                                                 backgroundColor: AppColors.orange);
-                                                           }
-                                                            //buyerId
-                                                            //history
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          height: 40,
-                                                          decoration: BoxDecoration(
-                                                              color: AppColors
-                                                                  .orange,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10)),
-                                                          child: Center(
-                                                            child: Text(
-                                                              "Sell watch",
-                                                              style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontFamily:
-                                                                      "Gotham",
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ).marginOnly(top: 12)
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  });
+                              if(watchModel.ownerId==FirebaseAuth.instance.currentUser!.uid){
+                                Get.to(SellWatch(watchId: watchModel),
+                                  transition: Transition.zoom,
+                                );
+                              }else{
+                                Get.snackbar("We Apologize", "You are not Owner of this watch,You can't sell it",colorText: Colors.white,backgroundColor: AppColors.orange);
+                              }
                             },
                             child: Container(
                                 alignment: Alignment.center,
@@ -729,11 +570,15 @@ class _WatchDetailScreenState extends State<WatchDetailScreen> {
                         borderRadius: BorderRadius.circular(50),
                         child: InkWell(
                           onTap: () async {
-                            EasyLoading.show();
-                            await DatabaseHelper().UpdateWatch(watchModel);
-                            EasyLoading.dismiss();
-                            Fluttertoast.showToast(msg: "Changes saved");
-                            Get.back();
+                            if(watchModel.ownerId==FirebaseAuth.instance.currentUser!.uid){
+                              EasyLoading.show();
+                              await DatabaseHelper().UpdateWatch(watchModel);
+                              EasyLoading.dismiss();
+                              Fluttertoast.showToast(msg: "Changes saved");
+                              Get.back();
+                            }else{
+                              Get.snackbar("We Apologize", "You are not Owner of this watch,You can't make changes",colorText: Colors.white,backgroundColor: AppColors.orange);
+                            }
                           },
                           child: Container(
                             width: MediaQuery.of(context).size.width,
@@ -757,7 +602,13 @@ class _WatchDetailScreenState extends State<WatchDetailScreen> {
                         elevation: 20,
                         borderRadius: BorderRadius.circular(50),
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            if(watchModel.ownerId==FirebaseAuth.instance.currentUser!.uid){
+
+                            }else{
+                              Get.snackbar("We Apologize", "You are not Owner of this watch,You can't delete this watch",colorText: Colors.white,backgroundColor: AppColors.orange);
+                            }
+                          },
                           child: Container(
                             width: MediaQuery.of(context).size.width,
                             height: 40,

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:watchminter/Constants/AppColors.dart';
-import 'package:watchminter/Models/UserModel.dart';
-import '../Global/firebase_ref.dart';
 import 'package:intl/intl.dart';
+import '../Constants/AppColors.dart';
+import '../Global/firebase_ref.dart';
+import 'ViewProfile.dart';
 
-import 'Home/WatchDetailScreen.dart';
-
-class ViewProfile extends StatefulWidget {
-  UserModel userModel;
-  ViewProfile(this.userModel,{Key? key}) : super(key: key);
+class GetUserDetail extends StatefulWidget {
+  final data;
+   GetUserDetail(this.data,{Key? key}) : super(key: key);
 
   @override
-  State<ViewProfile> createState() => _ViewProfileState();
+  State<GetUserDetail> createState() => _GetUserDetailState();
 }
 
-class _ViewProfileState extends State<ViewProfile> {
+
+class _GetUserDetailState extends State<GetUserDetail> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,11 @@ class _ViewProfileState extends State<ViewProfile> {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: AppColors.white
+                color: AppColors.white
+              //     image: DecorationImage(
+              //   fit: BoxFit.cover,
+              //   image: new AssetImage("assets/images/blacknwhite_bg.jpg"),
+              // )
             ),
           ),
           SingleChildScrollView(
@@ -51,6 +55,7 @@ class _ViewProfileState extends State<ViewProfile> {
                           height: MediaQuery.of(context).size.height,
                         ).marginOnly(bottom: 40),
                       ),
+
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Material(
@@ -60,7 +65,7 @@ class _ViewProfileState extends State<ViewProfile> {
                             radius: 50, // Image radius
                             backgroundColor: AppColors.orange,
                             backgroundImage:
-                                AssetImage("assets/images/watch.png"),
+                            AssetImage("assets/images/watch.png"),
                           ),
                         ),
                       )
@@ -68,13 +73,14 @@ class _ViewProfileState extends State<ViewProfile> {
                   ),
                 ).marginOnly(top: 70, left: 20, right: 20),
                 Text(
-                  widget.userModel.name,
+                  widget.data["Name"],
                   style: TextStyle(
                       fontFamily: 'Gotham',
                       color: AppColors.background,
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                 ).marginOnly(top: 12),
+
                 Text(
                   "Send a message",
                   style: TextStyle(
@@ -84,6 +90,7 @@ class _ViewProfileState extends State<ViewProfile> {
                     decoration: TextDecoration.underline,
                   ),
                 ),
+
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -94,6 +101,8 @@ class _ViewProfileState extends State<ViewProfile> {
                         fontWeight: FontWeight.bold),
                   ).marginAll(12),
                 ),
+
+
                 // Container(
                 //   child: SingleChildScrollView(
                 //     scrollDirection: Axis.horizontal,
@@ -158,10 +167,9 @@ class _ViewProfileState extends State<ViewProfile> {
 
                 Container(
                   height: 100,
-                  margin: EdgeInsets.symmetric(horizontal: 10),
                   child: StreamBuilder(
                       stream: watchesRef
-                          .where("ownerId", isEqualTo: widget.userModel.id)
+                          .where("ownerId", isEqualTo: widget.data["id"])
                           .snapshots(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (snapshot.hasError ||
@@ -180,7 +188,7 @@ class _ViewProfileState extends State<ViewProfile> {
                           return ListView.builder(
                               scrollDirection: Axis.horizontal,
                               physics: ScrollPhysics(),
-                              shrinkWrap: false,
+                              shrinkWrap: true,
                               primary: true,
                               itemCount:  snapshot.data.docs.length,
                               itemBuilder: (context, index) {
@@ -189,10 +197,11 @@ class _ViewProfileState extends State<ViewProfile> {
                         }
                       }),
                 ),
+
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "About "+widget.userModel.name,
+                    "About "+widget.data["Name"],
                     style: TextStyle(
                         color: AppColors.background,
                         fontSize: 22,
@@ -200,6 +209,9 @@ class _ViewProfileState extends State<ViewProfile> {
                         fontFamily: "Gotham"),
                   ).marginOnly(left: 12, top: 12),
                 ),
+
+                //Testing>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
                 Material(
                     elevation: 10,
                     borderRadius: BorderRadius.circular(10),
@@ -213,77 +225,77 @@ class _ViewProfileState extends State<ViewProfile> {
                           Row(children: [
                             Expanded(
                                 child: Text(
-                              "Business Name",
-                              style: TextStyle(
-                                  color: Colors.grey, fontFamily: "Gotham"),
-                            )),
+                                  "Business Name",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontFamily: "Gotham"),
+                                )),
                             Expanded(
                                 child: Text(
-                              widget.userModel.businessDetails,
-                              style: TextStyle(
-                                  color: AppColors.background,
-                                  fontFamily: "Gotham"),
-                            ))
+                                  widget.data["Business details"],
+                                  style: TextStyle(
+                                      color: AppColors.background,
+                                      fontFamily: "Gotham"),
+                                ))
                           ]).marginAll(10),
                           Row(children: [
                             Expanded(
                                 child: Text(
-                              "Username",
-                              style: TextStyle(
-                                  color: Colors.grey, fontFamily: "Gotham"),
-                            )),
+                                  "Username",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontFamily: "Gotham"),
+                                )),
                             Expanded(
                                 child: Text(
-                              widget.userModel.name,
-                              style: TextStyle(
-                                  color: AppColors.background,
-                                  fontFamily: "Gotham"),
-                            ))
+                                  widget.data["Name"],
+                                  style: TextStyle(
+                                      color: AppColors.background,
+                                      fontFamily: "Gotham"),
+                                ))
                           ]).marginOnly(left: 10, right: 10),
                           Row(children: [
                             Expanded(
                                 child: Text(
-                              "Location",
-                              style: TextStyle(
-                                  color: Colors.grey, fontFamily: "Gotham"),
-                            )),
+                                  "Location",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontFamily: "Gotham"),
+                                )),
                             Expanded(
                                 child: Text(
-                              widget.userModel.country,
-                              style: TextStyle(
-                                  color: AppColors.background,
-                                  fontFamily: "Gotham"),
-                            ))
+                                  widget.data["Country"],
+                                  style: TextStyle(
+                                      color: AppColors.background,
+                                      fontFamily: "Gotham"),
+                                ))
                           ]).marginOnly(left: 10, right: 10, top: 5),
                           Row(children: [
                             Expanded(
                                 child: Text(
-                              "Identity Verified",
-                              style: TextStyle(
-                                  color: Colors.grey, fontFamily: "Gotham"),
-                            )),
+                                  "Identity Verified",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontFamily: "Gotham"),
+                                )),
                             Expanded(
                                 child: Text(
-                              widget.userModel.idVerification,
-                              style: TextStyle(
-                                  color: AppColors.background,
-                                  fontFamily: "Gotham"),
-                            ))
+                                  widget.data["Verified"],
+                                  style: TextStyle(
+                                      color: AppColors.background,
+                                      fontFamily: "Gotham"),
+                                ))
                           ]).marginOnly(left: 10, right: 10, top: 5),
                           Row(children: [
                             Expanded(
                                 child: Text(
-                              "Trust Rating",
-                              style: TextStyle(
-                                  color: Colors.grey, fontFamily: "Gotham"),
-                            )),
+                                  "Trust Rating",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontFamily: "Gotham"),
+                                )),
                             Expanded(
                                 child: Text(
-                              widget.userModel.rating,
-                              style: TextStyle(
-                                  color: AppColors.background,
-                                  fontFamily: "Gotham"),
-                            ))
+                                  widget.data["Rating"],
+                                  style: TextStyle(
+                                      color: AppColors.background,
+                                      fontFamily: "Gotham"),
+                                ))
                           ]).marginOnly(left: 10, right: 10, top: 5),
 
                           Row(children: [
@@ -295,7 +307,7 @@ class _ViewProfileState extends State<ViewProfile> {
                                 )),
                             Expanded(
                                 child: Text(
-                                  getTime(widget.userModel.createdAt),
+                                  getTime(widget.data["Created at"]),
                                   style: TextStyle(
                                       color: AppColors.background,
                                       fontFamily: "Gotham"),
@@ -304,6 +316,7 @@ class _ViewProfileState extends State<ViewProfile> {
                         ],
                       ),
                     )).marginOnly(left: 12, right: 12, top: 10),
+
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -315,6 +328,9 @@ class _ViewProfileState extends State<ViewProfile> {
                         fontFamily: "Gotham"),
                   ).marginOnly(left: 12, top: 12),
                 ),
+
+                //Testing>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
                 Align(
                   alignment: Alignment.center,
@@ -343,94 +359,19 @@ class _ViewProfileState extends State<ViewProfile> {
       ),
     );
   }
-
   String getTime(var time) {
 
 
     DateTime now = DateTime.parse(time);
-     String formattedDate = DateFormat('yyyy-EEE-d-MMM-kk:mm:ss a').format(now);
-   // time= DateTime.tryParse(time);
+    String formattedDate = DateFormat('yyyy-EEE-d-MMM-kk:mm:ss a').format(now);
+    // time= DateTime.tryParse(time);
     // print(formattedDate.toString());
 
     return formattedDate.toString();
   }
 
-  @override
-  void initState() {
-    EasyLoading.dismiss();
-  }
-}
-
-class WatchCollectionTiles extends StatefulWidget {
-  final data;
-  WatchCollectionTiles(this.data,{Key? key}) : super(key: key);
-
-  @override
-  State<WatchCollectionTiles> createState() => _WatchCollectionTilesState();
-}
-
-class _WatchCollectionTilesState extends State<WatchCollectionTiles> {
-  @override
-  Widget build(BuildContext context) {
-    return  Material(
-          elevation: 10,
-          borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        onTap: (){
-          Get.to(WatchDetailScreen(widget.data["watchId"]),
-              transition: Transition.zoom);
-        },
-        child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.0),
-                          color: AppColors.white),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.0),
-                        child: FadeInImage.assetNetwork(
-                          image: widget.data["displayImage"],
-                          fit: BoxFit.cover,
-                          placeholder: "assets/images/watch.png",
-                          width: 100,
-                          height: 70,
-                        ).paddingSymmetric(vertical: 20),
-                      ),
-                    ),
-      )
-    ).marginOnly(left: 6, right: 6);
-  }
-}
-
-
-
-class ReviewTile extends StatefulWidget {
-  const ReviewTile({Key? key}) : super(key: key);
-
-  @override
-  State<ReviewTile> createState() => _ReviewTileState();
-}
-
-class _ReviewTileState extends State<ReviewTile> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Dave",
-            style:
-                TextStyle(color: AppColors.orange, fontWeight: FontWeight.bold,fontFamily: "Gotham"),
-          ),
-          Text(
-            "Bought a watch from John. Awesome expereince",
-            style: TextStyle(color: AppColors.background,fontFamily: "Gotham"),
-          ),
-          Divider(
-            color: Colors.grey,
-          ).marginOnly(top: 6, left: 12, right: 12)
-        ],
-      ),
-    ).marginOnly(left: 12, right: 12, bottom: 12);
-  }
+  // @override
+  // void initState() {
+  //   EasyLoading.dismiss();
+  // }
 }

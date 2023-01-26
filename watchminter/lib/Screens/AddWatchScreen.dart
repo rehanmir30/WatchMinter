@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
@@ -40,14 +39,23 @@ class _AddWatchScreenState extends State<AddWatchScreen> {
     } else {
       offeredBy = "Professional Dealer";
     }
-    watchModel.location="H: "+widget.userModel.house+" S: "+widget.userModel.street+" Town: "+widget.userModel.town+" ,"+widget.userModel.province+" ,"+widget.userModel.country;
+    watchModel.location = "H: " +
+        widget.userModel.house +
+        " S: " +
+        widget.userModel.street +
+        " Town: " +
+        widget.userModel.town +
+        " ," +
+        widget.userModel.province +
+        " ," +
+        widget.userModel.country;
     watchModel.forSale = value;
     userType = widget.userModel.type;
     DateTime now = DateTime.now();
     currentDate = DateFormat('d MMM y').format(now);
   }
 
-   selectImages() async {
+  selectImages() async {
     final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
     if (selectedImages!.isNotEmpty) {
       imageFileList!.addAll(selectedImages);
@@ -55,9 +63,7 @@ class _AddWatchScreenState extends State<AddWatchScreen> {
     setState(() {
       imageFileList!;
     });
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -87,33 +93,38 @@ class _AddWatchScreenState extends State<AddWatchScreen> {
                       ).marginOnly(top: 30, left: 12)),
                 ),
                 CarouselSlider(
-                  options: CarouselOptions(height: 200.0,viewportFraction: 1.0),
-                  items: imageFileList!.isNotEmpty?imageFileList?.map((i) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.symmetric(horizontal: 5.0),
-                            decoration: BoxDecoration(color: Colors.white),
-                            child: Image.file(File(i.path)));
-                      },
-                    );
-                  }).toList():[1].map((i) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.symmetric(horizontal: 5.0),
-                            decoration: BoxDecoration(color: AppColors.white),
-                            child: Image.asset(
-                              "assets/images/watch.png",
-                            ));
-                      },
-                    );
-                  }).toList(),
+                  options:
+                      CarouselOptions(height: 200.0, viewportFraction: 1.0),
+                  items: imageFileList!.isNotEmpty
+                      ? imageFileList?.map((i) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                  decoration:
+                                      BoxDecoration(color: Colors.white),
+                                  child: Image.file(File(i.path)));
+                            },
+                          );
+                        }).toList()
+                      : [1].map((i) {
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                  decoration:
+                                      BoxDecoration(color: AppColors.white),
+                                  child: Image.asset(
+                                    "assets/images/watch.png",
+                                  ));
+                            },
+                          );
+                        }).toList(),
                 ).marginOnly(top: 12),
                 InkWell(
-                  onTap: ()async{
+                  onTap: () async {
                     await selectImages();
                   },
                   child: Row(
@@ -280,8 +291,8 @@ class _AddWatchScreenState extends State<AddWatchScreen> {
                             )),
                             Expanded(
                                 child: Text(
-                                  watchModel.location,
-                                  style: TextStyle(
+                              watchModel.location,
+                              style: TextStyle(
                                   color: AppColors.background,
                                   fontFamily: "Gotham"),
                             ))
@@ -547,53 +558,54 @@ class _AddWatchScreenState extends State<AddWatchScreen> {
                             watchModel.price = Price;
                             watchModel.ownerId = widget.userModel.id;
                             watchModel.createdAt = currentDate;
+                            watchModel.escrow = true;
                             //print("Imagesssss: "+imageFileList!.length.toString());
-                            watchModel.images=imageFileList;
+                            watchModel.images = imageFileList;
                             if (widget.userModel.type == 0) {
                               watchModel.offeredBy = "Private owner/seller";
                             } else {
                               watchModel.offeredBy =
                                   "Professional owner/seller";
                             }
-                            if(imageFileList!.isEmpty){
+                            if (imageFileList!.isEmpty) {
                               Get.snackbar("Error", "Add watch images",
                                   colorText: AppColors.white,
-                                  icon:
-                                  Icon(Icons.error_outline, color: Colors.white),
+                                  icon: Icon(Icons.error_outline,
+                                      color: Colors.white),
                                   snackPosition: SnackPosition.TOP,
                                   backgroundColor: AppColors.orange);
-                            }else{
+                            } else {
                               EasyLoading.show(status: 'Saving watch');
                               await DatabaseHelper().AddWatch(watchModel);
                               EasyLoading.dismiss();
                               Get.back();
                             }
-
                           }
                         } else {
                           //watchModel.price = Price;
                           watchModel.ownerId = widget.userModel.id;
                           watchModel.createdAt = currentDate;
-                          watchModel.images=imageFileList;
+                          watchModel.escrow = true;
+                          watchModel.images = imageFileList;
                           if (widget.userModel.type == 0) {
                             watchModel.offeredBy = "Private owner/seller";
                           } else {
                             watchModel.offeredBy = "Professional owner/seller";
                           }
-                          if(imageFileList!.isEmpty){
+                          if (imageFileList!.isEmpty) {
                             Get.snackbar("Error", "Add watch images",
                                 colorText: AppColors.white,
-                                icon:
-                                Icon(Icons.error_outline, color: Colors.white),
+                                icon: Icon(Icons.error_outline,
+                                    color: Colors.white),
                                 snackPosition: SnackPosition.TOP,
                                 backgroundColor: AppColors.orange);
-                          }else{
+                          } else {
                             EasyLoading.show(status: 'Saving watch');
+
                             await DatabaseHelper().AddWatch(watchModel);
                             EasyLoading.dismiss();
                             Get.back();
                           }
-
                         }
                       }
                     },
